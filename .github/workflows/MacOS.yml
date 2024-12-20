@@ -1,4 +1,4 @@
-name: MacOS
+name: MacOS-AnyDesk
 
 on: [push, workflow_dispatch]
 
@@ -11,27 +11,21 @@ jobs:
       run: |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    - name: Install TeamViewer
+    - name: Install AnyDesk
       run: |
-        brew install --cask teamviewer
+        brew install --cask anydesk
 
-    - name: Start TeamViewer Daemon
+    - name: Start AnyDesk Daemon
       run: |
-        sudo /Applications/TeamViewer.app/Contents/MacOS/TeamViewer --daemon start
+        open -a AnyDesk
         sleep 10
 
-    - name: Get TeamViewer ID and Password
+    - name: Get AnyDesk Address
       run: |
-        echo "Fetching TeamViewer ID and Password..."
-        teamviewer info > teamviewer_info.txt
-        cat teamviewer_info.txt
-
-    - name: Print TeamViewer ID and Password
-      run: |
-        echo "Here are the TeamViewer credentials:"
-        cat teamviewer_info.txt
+        echo "Fetching AnyDesk ID..."
+        cat ~/Library/Application\ Support/AnyDesk/service.conf | grep 'ad_id'
 
     - name: Keep the Session Active
       run: |
         echo "Keeping session active for 6 hours..."
-        sleep 21600  # 6 hours in seconds
+        sleep 21600
