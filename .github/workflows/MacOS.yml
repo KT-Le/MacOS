@@ -1,9 +1,9 @@
-name: MacOS-AnyDesk
+name: MacOS-RDP
 
 on: [push, workflow_dispatch]
 
 jobs:
-  build:
+  enable-rdp:
     runs-on: macos-latest
 
     steps:
@@ -12,27 +12,19 @@ jobs:
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         echo "Homebrew installed successfully."
 
-    - name: Install AnyDesk
+    - name: Install xrdp and XQuartz
       run: |
-        brew install --cask anydesk
-        if [ ! -d "/Applications/AnyDesk.app" ]; then
-          echo "AnyDesk was not installed. Exiting."
-          exit 1
-        fi
-        echo "AnyDesk installed successfully."
+        brew install --cask xquartz
+        brew install xrdp
+        sudo launchctl load -w /Library/LaunchAgents/xrdp.plist
+        echo "xrdp and XQuartz installed successfully."
 
-    - name: Launch AnyDesk
+    - name: Start xrdp Service
       run: |
-        if [ -d "/Applications/AnyDesk.app" ]; then
-          open -a /Applications/AnyDesk.app
-          echo "AnyDesk launched successfully."
-        else
-          echo "AnyDesk application not found. Exiting."
-          exit 1
-        fi
-        sleep 10
+        sudo /opt/homebrew/bin/xrdp --nodaemon &
+        echo "xrdp service started."
 
-    - name: Keep the Session Active
+    - name: Display Connection Info
       run: |
-        echo "Keeping session active for 6 hours..."
-        sleep 21600
+        IP=$(ipconfig getifaddr en0)
+        echo "Connect to this macOS runner using RDP at ${IP}:3389"
