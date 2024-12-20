@@ -20,7 +20,7 @@ jobs:
     - name: Start Chrome Remote Desktop Service
       run: |
         /Applications/Google\ Chrome\ Remote\ Desktop\ Host.app/Contents/MacOS/chrome-remote-desktop-host --start-host \
-          --code="AUTHORIZATION_CODE" \
+          --code="4/0AanRRrsI9aJ8n5_q2sjRMgBzIlPDdqswSgcHJ1bZ0OmE8wz2SSizJDqugJdKdh-XexSF3g" \
           --redirect-url="https://remotedesktop.google.com/_/oauthredirect" \
           --name="GitHubRunner" \
           --pin=123456
