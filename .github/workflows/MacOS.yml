@@ -10,20 +10,22 @@ jobs:
     - name: Install Homebrew
       run: |
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo "Homebrew installed successfully."
 
     - name: Install AnyDesk
       run: |
-        brew install --cask anydesk
+        brew install --cask anydesk || echo "AnyDesk installation failed."
+        brew list --cask | grep -q anydesk && echo "AnyDesk is installed." || echo "AnyDesk is not installed."
 
-    - name: Start AnyDesk Daemon
+    - name: Launch AnyDesk
       run: |
-        open -a AnyDesk
+        if open -a AnyDesk; then
+          echo "AnyDesk launched successfully."
+        else
+          echo "Unable to find AnyDesk. Installation may have failed."
+          exit 1
+        fi
         sleep 10
-
-    - name: Get AnyDesk Address
-      run: |
-        echo "Fetching AnyDesk ID..."
-        cat ~/Library/Application\ Support/AnyDesk/service.conf | grep 'ad_id'
 
     - name: Keep the Session Active
       run: |
