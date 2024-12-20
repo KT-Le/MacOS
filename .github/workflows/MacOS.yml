@@ -1,27 +1,32 @@
-name: MacOS-VNC
+name: MacOS-ChromeRemoteDesktop
 
 on: [push, workflow_dispatch]
 
 jobs:
-  enable-vnc:
+  setup-crd:
     runs-on: macos-latest
 
     steps:
-    - name: Enable Screen Sharing (VNC)
+    - name: Install Chrome Browser
       run: |
-        echo "Activating Screen Sharing..."
-        sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart \
-          -activate -configure -access -on -clientopts -setvnclegacy -vnclegacy yes \
-          -clientopts -setvncpw -vncpw your_password -restart -agent -privs -all
-        echo "Screen Sharing activated."
+        brew install --cask google-chrome
+        echo "Google Chrome installed successfully."
 
-    - name: Display Connection Info
+    - name: Install Chrome Remote Desktop
       run: |
-        IP=$(ipconfig getifaddr en0)
-        echo "Connect to this macOS runner using VNC at ${IP}:5900"
-        echo "Password: your_password"
+        brew install --cask chrome-remote-desktop-host
+        echo "Chrome Remote Desktop installed successfully."
+
+    - name: Start Chrome Remote Desktop Service
+      run: |
+        /Applications/Google\ Chrome\ Remote\ Desktop\ Host.app/Contents/MacOS/chrome-remote-desktop-host --start-host \
+          --code="AUTHORIZATION_CODE" \
+          --redirect-url="https://remotedesktop.google.com/_/oauthredirect" \
+          --name="GitHubRunner" \
+          --pin=123456
+        echo "Chrome Remote Desktop configured."
 
     - name: Keep Session Active for 6 Hours
       run: |
         echo "Keeping session active for 6 hours..."
-        sleep 21600  # 6 hours in seconds
+        sleep 21600  # 6 hours
