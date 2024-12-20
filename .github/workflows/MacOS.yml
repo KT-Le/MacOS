@@ -14,15 +14,20 @@ jobs:
 
     - name: Install AnyDesk
       run: |
-        brew install --cask anydesk || echo "AnyDesk installation failed."
-        brew list --cask | grep -q anydesk && echo "AnyDesk is installed." || echo "AnyDesk is not installed."
+        brew install --cask anydesk
+        if [ ! -d "/Applications/AnyDesk.app" ]; then
+          echo "AnyDesk was not installed. Exiting."
+          exit 1
+        fi
+        echo "AnyDesk installed successfully."
 
     - name: Launch AnyDesk
       run: |
-        if open -a AnyDesk; then
+        if [ -d "/Applications/AnyDesk.app" ]; then
+          open -a /Applications/AnyDesk.app
           echo "AnyDesk launched successfully."
         else
-          echo "Unable to find AnyDesk. Installation may have failed."
+          echo "AnyDesk application not found. Exiting."
           exit 1
         fi
         sleep 10
