@@ -1,0 +1,37 @@
+name: MacOS
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Install Homebrew
+      run: |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    - name: Install TeamViewer
+      run: |
+        brew install --cask teamviewer
+
+    - name: Start TeamViewer Daemon
+      run: |
+        sudo /Applications/TeamViewer.app/Contents/MacOS/TeamViewer --daemon start
+        sleep 10
+
+    - name: Get TeamViewer ID and Password
+      run: |
+        echo "Fetching TeamViewer ID and Password..."
+        teamviewer info > teamviewer_info.txt
+        cat teamviewer_info.txt
+
+    - name: Print TeamViewer ID and Password
+      run: |
+        echo "Here are the TeamViewer credentials:"
+        cat teamviewer_info.txt
+
+    - name: Keep the Session Active
+      run: |
+        echo "Keeping session active for 6 hours..."
+        sleep 21600  # 6 hours in seconds
